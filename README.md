@@ -124,23 +124,13 @@ Resposta padrão:
 - Guardar `id` retornado pois ele será usado nas rotas `/:id`.
 - Validar no cliente com as mesmas regras para UX rápida, mas confiar na resposta do backend.
 
-## Deploy na Vercel
+## Deploy recomendado
 
-Este projeto já está preparado para rodar na Vercel como uma função serverless que expõe o app Express em `/`.
+Por ser um servidor Express contínuo, recomenda-se usar plataformas que suportem processos Node long-running (Railway, Render, Fly.io, VPS etc.). Fluxo típico:
 
-Passos resumidos:
+1. Configurar variáveis de ambiente equivalentes às do `.env` no painel da plataforma.
+2. Executar `npm install` como build step e `npm start` como start command.
+3. Garantir que a porta exposta é a fornecida pela plataforma (muitas definem `PORT` automaticamente).
 
-- Configure variáveis de ambiente no painel do projeto Vercel (Settings → Environment Variables):
-  - `AIRTABLE_API_KEY` = seu token do Airtable
-  - `AIRTABLE_BASE_ID` = id da base
-  - `AIRTABLE_TABLE_NAME` = Produtos
-  - `PORT` (opcional)
-- O arquivo `vercel.json` já redireciona todas as requisições para a função `api/index.js`, que envolve o Express via `serverless-http`.
-- Empurre o repositório para GitHub/GitLab/Bitbucket e conecte-o no Vercel (Import Project). Vercel detectará o uso do `@vercel/node` pela configuração em `vercel.json`.
-
-Observações:
-
-- As rotas permanecem as mesmas que você usa localmente (`/produtos`, `/produtos/:id`, `/validar-produto`). No ambiente Vercel elas estarão disponíveis na raiz do domínio (ex.: `https://seu-projeto.vercel.app/produtos`).
-- Defina variáveis de ambiente no painel do Vercel — NÃO comite seu `.env` com segredos.
-- Se precisar de maior tempo de execução ou memória, ajuste `functions` no `vercel.json` (posso ajudar a configurar caso necessário).
+> **Observação**: Vercel não é indicada para esta aplicação quando não se usa funções serverless, pois ela encerra processos persistentes automaticamente. Prefira plataformas citadas acima ou conteinerize o app para deploy em serviços como AWS ECS/Beanstalk.
 
