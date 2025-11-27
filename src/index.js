@@ -1,33 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-require('dotenv').config();
-
-const produtosRoutes = require('./routes/produtosRoutes');
+const createApp = require('./app');
 const logger = require('./logger');
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
-
-// HTTP request logging via morgan -> winston. Use a concise format to show routes.
-app.use(morgan(process.env.LOG_FORMAT || 'dev', { stream: logger.stream }));
-
-app.use('/', produtosRoutes);
-
-// Simple heartbeat route to help with uptime checks
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// Centralized error handler to avoid duplicated try/catch responses
-app.use((err, req, res, next) => {
-  logger.error('Erro inesperado', { message: err.message, stack: err.stack });
-  const status = err.statusCode || 500;
-  res.status(status).json({ mensagem: 'Erro interno no servidor' });
-});
+const app = createApp();
 
 const server = app.listen(PORT, () => {
   logger.info(`Servidor GreenEats rodando na porta ${PORT}`);

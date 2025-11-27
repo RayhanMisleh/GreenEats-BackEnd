@@ -123,3 +123,24 @@ Resposta padrão:
 - Usar `GET /produtos` para render listagens; `dataCriacao` pode alimentar etiquetas "novo".
 - Guardar `id` retornado pois ele será usado nas rotas `/:id`.
 - Validar no cliente com as mesmas regras para UX rápida, mas confiar na resposta do backend.
+
+## Deploy na Vercel
+
+Este projeto já está preparado para rodar na Vercel como uma função serverless que expõe o app Express em `/`.
+
+Passos resumidos:
+
+- Configure variáveis de ambiente no painel do projeto Vercel (Settings → Environment Variables):
+  - `AIRTABLE_API_KEY` = seu token do Airtable
+  - `AIRTABLE_BASE_ID` = id da base
+  - `AIRTABLE_TABLE_NAME` = Produtos
+  - `PORT` (opcional)
+- O arquivo `vercel.json` já redireciona todas as requisições para a função `api/index.js`, que envolve o Express via `serverless-http`.
+- Empurre o repositório para GitHub/GitLab/Bitbucket e conecte-o no Vercel (Import Project). Vercel detectará o uso do `@vercel/node` pela configuração em `vercel.json`.
+
+Observações:
+
+- As rotas permanecem as mesmas que você usa localmente (`/produtos`, `/produtos/:id`, `/validar-produto`). No ambiente Vercel elas estarão disponíveis na raiz do domínio (ex.: `https://seu-projeto.vercel.app/produtos`).
+- Defina variáveis de ambiente no painel do Vercel — NÃO comite seu `.env` com segredos.
+- Se precisar de maior tempo de execução ou memória, ajuste `functions` no `vercel.json` (posso ajudar a configurar caso necessário).
+
