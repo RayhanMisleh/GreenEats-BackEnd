@@ -1,14 +1,19 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 require('dotenv').config();
 
 const produtosRoutes = require('./routes/produtosRoutes');
+const logger = require('./logger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// HTTP request logging via morgan -> winston. Use a concise format to show routes.
+app.use(morgan(process.env.LOG_FORMAT || 'dev', { stream: logger.stream }));
 
 app.use('/', produtosRoutes);
 
@@ -19,11 +24,20 @@ app.get('/health', (req, res) => {
 
 // Centralized error handler to avoid duplicated try/catch responses
 app.use((err, req, res, next) => {
-  console.error('Erro inesperado:', err);
+  logger.error('Erro inesperado', { message: err.message, stack: err.stack });
   const status = err.statusCode || 500;
   res.status(status).json({ mensagem: 'Erro interno no servidor' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor GreenEats rodando na porta ${PORT}`);
+const server = app.listen(PORT, () => {
+  logger.info(`Servidor GreenEats rodando na porta ${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    logger.error(`Porta ${PORT} já está em uso. Use outra porta (ex: PORT=4000) ou mate o processo que está rodando nesta porta.`);
+    process.exit(1);
+  }
+  logger.error('Erro no servidor', { message: err.message, stack: err.stack });
+  process.exit(1);
 });
