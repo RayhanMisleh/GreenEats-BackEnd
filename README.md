@@ -45,6 +45,7 @@ PORT=3000
 2. Criar `.env` com credenciais Airtable.
 3. `npm run dev`
 4. API disponível em `http://localhost:3000`
+  - `GET /` responde com um JSON curto confirmando que a API está ativa.
 
 ## Modelo de Produto
 ```json

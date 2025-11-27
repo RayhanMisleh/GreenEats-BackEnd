@@ -15,6 +15,12 @@ app.use(morgan(process.env.LOG_FORMAT || 'dev', { stream: logger.stream }));
 
 app.use('/', produtosRoutes);
 
+app.get('/', (req, res) => {
+  res.json({
+    mensagem: 'GreenEats API ativa. Use /produtos, /validar-produto ou /health.',
+  });
+});
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
